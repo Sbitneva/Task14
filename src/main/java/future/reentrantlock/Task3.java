@@ -1,7 +1,6 @@
 package future.reentrantlock;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
@@ -11,41 +10,49 @@ import java.util.concurrent.locks.ReentrantLock;
  * by FixedThreadPool(4) with Future with ReentrantLock;
  */
 
+class IncrementValue implements Callable<Long> {
+    public static Long value = 0L;
+    private static Object sync = new Object();
+    public Long call() {
+        synchronized (sync) {
+            value = value + 1L;
+        }
+        return value;
+    }
+}
+
 public class Task3 {
-    public static long primitiveValue = 0;
+    private List <Future<Long>> futuresList= new ArrayList<>();
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private Lock reentrantLock = new ReentrantLock();
+    private IncrementValue incrementValue = new IncrementValue();
 
-    public static void calc() {
+    public void calc() {
+        fillFeatures();
+        int futureIndex;
 
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
-        Lock lock = new ReentrantLock();
-
-        Collection<Callable<Long>> tasks = new ArrayList<>();
-
-        long i;
-        for ( i = 0; i < 1_000_000; i++) {
-            tasks.add(() -> {
-                lock.lock();
-                try {
-                    primitiveValue = primitiveValue + 1;
-                    return primitiveValue;
-                } finally {
-                    lock.unlock();
+        for(futureIndex = 0; futureIndex < 1_000_000; futureIndex++)  {
+            try{
+                if(reentrantLock.tryLock()) {
+                    reentrantLock.lock();
+                    (futuresList.get(futureIndex)).get();
                 }
-            });
-        }
-        try {
-
-            List<Future<Long>> futureList = executorService.invokeAll(tasks);
-
-            for (Future<Long> future : futureList) {
-                Long value = future.get();
+            } catch ( InterruptedException | ExecutionException e) {
+                System.out.println(e.getClass() + " : " + e.getMessage());
+            } finally {
+                reentrantLock.unlock();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println(e.getMessage());
         }
+
+        System.out.println("value: " + IncrementValue.value);
         executorService.shutdown();
-        System.out.println(primitiveValue);
 
     }
 
+    void fillFeatures(){
+        for(int i = 0; i < 1_000_000; i++) {
+            futuresList.add(executorService.submit(incrementValue));
+        }
+    }
 }
+

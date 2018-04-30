@@ -17,23 +17,38 @@ public class Task4 {
     public static void calc(){
         ExecutorService executor = Executors.newFixedThreadPool(4);
         ReadWriteLock lock = new ReentrantReadWriteLock();
-
-        long i;
-        for ( i = 0; i < 1_000_000; i++) {
+        int i;
+        for(i = 0; i < 1_000_000; i++) {
             executor.submit(() -> {
                 lock.writeLock().lock();
                 try {
                     primitiveValue = primitiveValue + 1;
-                    TimeUnit.MILLISECONDS.sleep(5);
+                } catch(Exception e) {
+                    System.out.println(e.getMessage());
+                } finally{
+                    lock.writeLock().unlock();
+                }
+                //System.out.println(primitiveValue);
+            });
+
+        }
+            /*Runnable readTask = () -> {
+                lock.readLock();
+                try {
+                    //System.out.println(primitiveValue);
+                    TimeUnit.MILLISECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     System.out.println(e.getMessage());
                 } finally {
-                    lock.writeLock().unlock();
+                    lock.readLock().unlock();
                 }
-            });
-        }
+            };
 
-
+            executor.submit(readTask);
+            executor.submit(readTask);
+            executor.submit(readTask);
+            executor.submit(readTask);
+            */
 
 
         System.out.println(primitiveValue);
