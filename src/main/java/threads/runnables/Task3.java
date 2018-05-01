@@ -4,11 +4,12 @@ package threads.runnables;
  * with 4 threads and implement Runnable;
  */
 
-class SharedLong{
+class SharedLong {
 
-    public static long value = 0;
     private static final Object sync = new Object();
-    public static void increment(){
+    public static long value = 0;
+
+    public static void increment() {
         synchronized (sync) {
             value++;
         }
@@ -16,10 +17,11 @@ class SharedLong{
 }
 
 class IncRunnable implements Runnable {
-    IncRunnable(){
+    IncRunnable() {
         new Thread(this).start();
     }
-    public void run(){
+
+    public void run() {
         SharedLong.increment();
     }
 }
@@ -29,11 +31,11 @@ public class Task3 {
     public void calc() {
 
         IncRunnable[] incThreads = new IncRunnable[4];
-        for(int i = 0 ; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             incThreads[i] = new IncRunnable();
         }
         try {
-            while (SharedLong.value < 1_000_000){
+            while (SharedLong.value < 1_000_000) {
                 for (int i = 0; i < 4; i++) {
                     incThreads[i].run();
                 }

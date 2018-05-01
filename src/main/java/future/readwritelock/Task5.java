@@ -1,9 +1,12 @@
 package future.readwritelock;
 
-import java.util.HashMap;
+import future.IncrementValue;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -12,48 +15,33 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 
 public class Task5 {
-    /*
+    private List<Future<Long>> futuresList = new ArrayList<>();
+    private ExecutorService executor = Executors.newFixedThreadPool(4);
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private IncrementValue incrementValue = new IncrementValue();
 
-    public static void calc(){
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        ReadWriteLock lock = new ReentrantReadWriteLock();
-        int i;
-        for(i = 0; i < 1_000_000; i++) {
-            executor.submit(() -> {
-                lock.writeLock().lock();
-                try {
-                    primitiveValue = primitiveValue + 1;
-                } catch(Exception e) {
-                    System.out.println(e.getMessage());
-                } finally{
-                    lock.writeLock().unlock();
-                }
-                //System.out.println(primitiveValue);
-            });
+    public void calc() {
+        fillFeatures();
 
+        for (int i = 0; i < 1_000_000; i++) {
+            lock.writeLock().lock();
+            try {
+                futuresList.get(i).get();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
-            /*Runnable readTask = () -> {
-                lock.readLock();
-                try {
-                    //System.out.println(primitiveValue);
-                    TimeUnit.MILLISECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    System.out.println(e.getMessage());
-                } finally {
-                    lock.readLock().unlock();
-                }
-            };
 
-            executor.submit(readTask);
-            executor.submit(readTask);
-            executor.submit(readTask);
-            executor.submit(readTask);
-
-
-
-        System.out.println(primitiveValue);
-
+        System.out.println(incrementValue.getValue());
         executor.shutdown();
-        */
+    }
+
+    private void fillFeatures() {
+        for (int j = 0; j < 1_000_000; j++) {
+            futuresList.add(executor.submit(incrementValue));
+        }
+    }
 
 }

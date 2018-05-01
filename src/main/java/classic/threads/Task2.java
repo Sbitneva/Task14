@@ -4,10 +4,11 @@ package classic.threads;
  * synchronized classic code with 4 threads and extends Thread;
  */
 
-class SharedLong{
-    public static long value = 0;
+class SharedLong {
     private static final Object sync = new Object();
-    public static void increment(){
+    public static long value = 0;
+
+    public static void increment() {
         synchronized (sync) {
             SharedLong.value++;
         }
@@ -26,14 +27,14 @@ class IncThread extends Thread {
 }
 
 public class Task2 {
-    public static void calc(){
+    public static void calc() {
         IncThread[] incThreads = new IncThread[4];
-        for(int i = 0 ; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             incThreads[i] = new IncThread();
             incThreads[i].setName("Thread " + (i + 1));
         }
         try {
-            while (SharedLong.value < 1_000_000){
+            while (SharedLong.value < 1_000_000) {
                 for (int i = 0; i < 4; i++) {
                     incThreads[i].run();
                 }
