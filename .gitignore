@@ -1,0 +1,11 @@
+.idea/
+target/
+.m2/
+tomcat.*/
+memory:*
+checkstyle-*
+*.class
+*.iml
+*.log*
+*.dat
+*.db-journal
