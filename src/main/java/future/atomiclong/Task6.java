@@ -29,9 +29,9 @@ public class Task6 {
 
     public void calc() {
         fillFeatures();
-        for (int i = 0; i < 1_000_000; i++) {
+        for (Future<AtomicLong>future : futuresList) {
             try {
-                futuresList.get(i).get();
+                future.get();
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println(e.getClass() + " : " + e.getMessage());
             }

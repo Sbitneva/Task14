@@ -26,11 +26,11 @@ public class Task4 {
         fillFeatures();
         int futureIndex;
 
-        for (futureIndex = 0; futureIndex < 1_000_000; futureIndex++) {
+        for (Future<Long> future : futuresList) {
             try {
                 if (reentrantLock.tryLock()) {
                     reentrantLock.lock();
-                    (futuresList.get(futureIndex)).get();
+                    future.get();
                 }
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println(e.getClass() + " : " + e.getMessage());

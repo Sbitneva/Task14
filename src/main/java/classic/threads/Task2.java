@@ -18,10 +18,7 @@ class SharedLong {
 class IncThread extends Thread {
     @Override
     public void run() {
-        //System.out.println(this.getName() + " execution started");
         SharedLong.increment();
-        //System.out.println("value = " + SharedLong.value);
-        //System.out.println(this.getName() + " execution ended");
     }
 
 }

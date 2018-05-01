@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -22,11 +23,10 @@ public class Task5 {
 
     public void calc() {
         fillFeatures();
-
-        for (int i = 0; i < 1_000_000; i++) {
+        for (Future<Long> future : futuresList) {
             lock.writeLock().lock();
             try {
-                futuresList.get(i).get();
+                future.get();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             } finally {
