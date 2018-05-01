@@ -17,9 +17,6 @@ class SharedLong {
 }
 
 class IncRunnable implements Runnable {
-    IncRunnable() {
-        new Thread(this).start();
-    }
 
     public void run() {
         SharedLong.increment();
@@ -30,9 +27,9 @@ public class Task3 {
 
     public void calc() {
 
-        IncRunnable[] incThreads = new IncRunnable[4];
+        Thread[] incThreads = new Thread[4];
         for (int i = 0; i < 4; i++) {
-            incThreads[i] = new IncRunnable();
+            incThreads[i] = new Thread(new IncRunnable());
         }
         try {
             while (SharedLong.value < 1_000_000) {
@@ -40,6 +37,10 @@ public class Task3 {
                     incThreads[i].run();
                 }
             }
+            for (int i = 0; i < 4; i++) {
+                incThreads[i].join();
+            }
+
 
         } catch (Exception e) {
             System.out.println(e.getClass() + " : " + e.getMessage());
