@@ -11,8 +11,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * by FixedThreadPool(4) with Future with ReadWriteLock
  */
 
-public class Task4 {
-    public static long primitiveValue = 0;
+public class Task5 {
+    /*
 
     public static void calc(){
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -48,11 +48,12 @@ public class Task4 {
             executor.submit(readTask);
             executor.submit(readTask);
             executor.submit(readTask);
-            */
+
 
 
         System.out.println(primitiveValue);
 
         executor.shutdown();
-    }
+        */
+
 }
